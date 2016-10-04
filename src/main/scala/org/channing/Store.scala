@@ -10,4 +10,5 @@ abstract class Store[C[_]] {
 
   def get(k: String): Work[C, Option[String]]
 
+  def postCommit(pc: PostCommit): Work[C, Unit]
 }

@@ -10,5 +10,6 @@ class SomethingElse[C[_]](store: Store[C]) {
     for {
       x ← store.get("a")
       y ← store.get("b")
+      _← store.postCommit(PostCommit(() ⇒ println("nasty side-effect")))
     } yield s"$x + $y"
 }
