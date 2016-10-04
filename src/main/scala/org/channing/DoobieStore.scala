@@ -14,11 +14,17 @@ class DoobieStore(transactor: Transactor[IO]) extends Store[ConnectionIO] {
   def get(k: String): Work[ConnectionIO, Option[String]] =
     WriterT[ConnectionIO, List[PostCommit], Option[String]](getDoobie(k).map(v ⇒ (Nil, v)))
 
+  def put(k: String, v: String): Work[ConnectionIO, Int] =
+    WriterT[ConnectionIO, List[PostCommit], Int](putDoobie(k, v).map(v ⇒ (Nil, v)))
+
   def postCommit(pc: PostCommit): Work[ConnectionIO, Unit] =
     WriterT[ConnectionIO, List[PostCommit], Unit]((List(pc), ()).point[ConnectionIO])
 
   private def getDoobie(k: String): ConnectionIO[Option[String]] =
     sql"select x from y".query[String].option
+
+  private def putDoobie(k: String, v: String): ConnectionIO[Int] =
+    sql"insert into person (name, age) values ($k, $v)".update.run
 
   def runWork[T](work: Work[ConnectionIO, T]): Throwable \/ T =
     \/.fromTryCatchNonFatal {
