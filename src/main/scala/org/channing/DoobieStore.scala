@@ -6,16 +6,6 @@ import doobie.util.transactor.Transactor
 import scalaz.{Monad, WriterT, \/}
 import scalaz.effect.IO
 
-abstract class Store[C[_]] {
-
-  implicit def M: Monad[C]
-
-  def runWork[T](work: Work[C, T]): Throwable \/  T
-
-  def get(k: String): Work[C, Option[String]]
-
-}
-
 class DoobieStore(transactor: Transactor[IO]) extends Store[ConnectionIO] {
 
   val M: Monad[ConnectionIO] = implicitly[Monad[ConnectionIO]]
