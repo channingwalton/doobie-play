@@ -2,7 +2,7 @@ package org.channing
 
 import scalaz.std.list._
 
-class SomethingElse[C[_]](store: Store[C]) {
+class SomethingUsingTheStore[C[_]](store: Store[C]) {
 
   import store._
 
