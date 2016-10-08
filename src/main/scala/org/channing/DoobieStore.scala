@@ -26,9 +26,9 @@ class DoobieStore(transactor: Transactor[IO]) extends Store[ConnectionIO] {
   private def putDoobie(k: String, v: String): ConnectionIO[Int] =
     sql"insert into person (name, age) values ($k, $v)".update.run
 
-  def runWork[T](work: StoreIO[ConnectionIO, T]): Throwable \/ T =
+  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable \/ T =
     \/.fromTryCatchNonFatal {
-      val conn: ConnectionIO[(List[PostCommit], T)] = work.run
+      val conn: ConnectionIO[(List[PostCommit], T)] = storeIO.run
       val (postCommits, result) = conn.transact(transactor).unsafePerformIO()
       postCommits.foreach(_.f())
       result
