@@ -11,7 +11,7 @@ of operations on the store.
 To support the idea side-effects performed after a
 successful store operation, a post commit, the operations
 on Store return a _StoreIO[C[_], A]_, a type alias for
-_WriterT[C, List[PostCommit], A]_. This enables post commit
+_WriterT[C, List[PostCommit], A]_ . This enables post commit
 operations to be freely mixed in with store operations. 
 
 See [Store](src/main/scala/org/channing/Store.scala) and [SomethingUsingTheStore](src/main/scala/org/channing/SomethingUsingTheStore.scala) first, then see how
