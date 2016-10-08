@@ -6,7 +6,7 @@ doesn't leak out all over your codebase.
 
 This project has a simple _Store_ described by a trait
 parameterised by C[_], some context containing the result
-of operations in the store.
+of operations on the store.
 
 To support the idea side-effects performed after a
 successful store operation, a post commit, the operations
