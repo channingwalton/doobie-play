@@ -14,5 +14,5 @@ on Store return a _StoreIO[C[_], A]_, a type alias for
 _WriterT[C, List[PostCommit], A]_. This enables post commit
 operations to be freely mixed in with store operations. 
 
-See [Store](src/org/channing/Store.scala) and [SomethingUsingTheStore](src/org/channing/SomethingUsingTheStore.scala) first, then see how
-the [DoobieStore](SomethingUsingTheStore) is implemented.
+See [Store](src/main/scala/org/channing/Store.scala) and [SomethingUsingTheStore](src/main/scala/org/channing/SomethingUsingTheStore.scala) first, then see how
+the [DoobieStore](src/main/scala/org/channing/DoobieStore.scala) is implemented.
