@@ -26,7 +26,8 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard",
   "-Xfuture")
 
-
 libraryDependencies += "org.tpolecat" %% "doobie-core" % "0.2.3"
 
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.8"
+
+libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2"
