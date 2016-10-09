@@ -1,4 +1,4 @@
-package org.channing
+package org.channing.simple
 
 import scalaz.\/
 

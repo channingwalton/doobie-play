@@ -1,11 +1,11 @@
-package org.channing
+package org.channing.simple
 
 import scalaz.Monad
 
 // import the type class goodies so that
 // we can use for-comprehensions to work
 // with the store regardless of the store implementation
-import StoreIO._
+import org.channing.simple.StoreIO._
 
 class SomethingUsingTheStore[C[_]: Monad](store: Store[C]) {
 

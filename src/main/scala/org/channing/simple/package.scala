@@ -1,7 +1,7 @@
-package org
+package org.channing
 
 import scalaz.WriterT
 
-package object channing {
+package object simple {
   type StoreIO[C[_], A] = WriterT[C, List[PostCommit], A]
 }

@@ -1,4 +1,4 @@
-package org.channing
+package org.channing.simple
 
 import doobie.util.transactor.{DriverManagerTransactor, Transactor}
 

@@ -1,11 +1,11 @@
-package org.channing
+package org.channing.simple
 
 import doobie.imports._
 import doobie.util.transactor.Transactor
 
 import scalaz.concurrent.Task
-import scalaz.{Monad, WriterT, \/}
 import scalaz.syntax.monad._
+import scalaz.{Monad, WriterT, \/}
 
 class DoobieStore(transactor: Transactor[Task]) extends Store[ConnectionIO] {
 

@@ -1,9 +1,8 @@
-package org.channing
+package org.channing.simple
 
 import shapeless.cachedImplicit
 
 import scalaz.{Monad, Semigroup}
-import scalaz.std.list._
 
 object StoreIO {
   // cache these implicits so users of the store don't need to import them
