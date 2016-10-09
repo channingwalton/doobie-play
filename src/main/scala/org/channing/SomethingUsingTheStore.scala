@@ -2,7 +2,7 @@ package org.channing
 
 class SomethingUsingTheStore[C[_]](store: Store[C]) {
 
-  // import the type class goodies in store so that
+  // import the type class goodies so that
   // we can use for-comprehensions to work
   // with the store regardless of the store implementation
   import StoreIO._
