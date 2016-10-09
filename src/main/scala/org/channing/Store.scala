@@ -1,11 +1,8 @@
 package org.channing
 
-import scalaz.{Monad, \/}
-import StoreIO._
+import scalaz.\/
 
 abstract class Store[C[_]] {
-
-  implicit def M: Monad[C]
 
   def runStoreIO[T](storeIO: StoreIO[C, T]): Throwable \/  T
 

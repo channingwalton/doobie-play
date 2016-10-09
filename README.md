@@ -4,7 +4,7 @@ When using [Doobie](https://github.com/tpolecat/doobie) in a real system you wil
 abstract away from *ConnectionIO*, a Doobie type, so it
 doesn't leak out all over your codebase. The problem then is how to work with the resulting abstraction.
 
-This project has a simple *Store* described by a trait
+This project has a simple [Store](src/main/scala/org/channing/Store.scala), a trait
 parameterised by C[_], some context containing the result
 of operations on the store.
 
