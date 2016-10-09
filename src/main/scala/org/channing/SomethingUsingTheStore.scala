@@ -5,6 +5,7 @@ class SomethingUsingTheStore[C[_]](store: Store[C]) {
   // import the type class goodies in store so that
   // we can use for-comprehensions to work
   // with the store regardless of the store implementation
+  import StoreIO._
   import store._
 
   def doIt: StoreIO[C, String] = {
