@@ -3,11 +3,11 @@ package org.channing
 import doobie.imports._
 import doobie.util.transactor.Transactor
 
+import scalaz.concurrent.Task
 import scalaz.{Monad, WriterT, \/}
-import scalaz.effect.IO
 import scalaz.syntax.monad._
 
-class DoobieStore(transactor: Transactor[IO]) extends Store[ConnectionIO] {
+class DoobieStore(transactor: Transactor[Task]) extends Store[ConnectionIO] {
 
   val M: Monad[ConnectionIO] = implicitly[Monad[ConnectionIO]]
 
@@ -26,11 +26,11 @@ class DoobieStore(transactor: Transactor[IO]) extends Store[ConnectionIO] {
   private def putDoobie(k: String, v: String): ConnectionIO[Int] =
     sql"insert into person (name, age) values ($k, $v)".update.run
 
-  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable \/ T =
-    \/.fromTryCatchNonFatal {
-      val conn: ConnectionIO[(List[PostCommit], T)] = storeIO.run
-      val (postCommits, result) = conn.transact(transactor).unsafePerformIO()
-      postCommits.foreach(_.f())
-      result
+  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable \/ T = {
+    storeIO.run.transact(transactor).attemptRun.map {
+      case (postCommits, result) ⇒
+        postCommits.foreach(_.f())
+        result
     }
+  }
 }
