@@ -16,7 +16,7 @@ operations to be freely mixed in with store operations.
 
 See [Store](src/main/scala/org/channing/Store.scala) and 
 [SomethingUsingTheStore](src/main/scala/org/channing/SomethingUsingTheStore.scala) first, then 
-look at how [](src/main/scala/org/channing/Service.scala), how something not using Store directly
+look at how [Service](src/main/scala/org/channing/Service.scala), how something not using Store directly
 but working with StoreIO, summon the implicits it needs.
  
 Finally, see [DoobieStore](src/main/scala/org/channing/DoobieStore.scala).
