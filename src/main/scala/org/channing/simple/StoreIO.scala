@@ -1,8 +1,8 @@
 package org.channing.simple
 
+import cats.{Monad, Semigroup}
+import cats.instances.list._
 import shapeless.cachedImplicit
-
-import scalaz.{Monad, Semigroup}
 
 object StoreIO {
   // cache these implicits so users of the store don't need to import them

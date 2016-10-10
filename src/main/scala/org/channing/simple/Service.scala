@@ -1,8 +1,7 @@
 package org.channing.simple
 
+import cats.Monad
 import org.channing.simple.StoreIO._
-
-import scalaz.Monad
 
 /**
   * This class does not directly make use of a Store, but works with

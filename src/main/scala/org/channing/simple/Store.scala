@@ -1,10 +1,10 @@
 package org.channing.simple
 
-import scalaz.\/
+import cats.data.Xor
 
 abstract class Store[C[_]] {
 
-  def runStoreIO[T](storeIO: StoreIO[C, T]): Throwable \/  T
+  def runStoreIO[T](storeIO: StoreIO[C, T]): Throwable Xor  T
 
   def get(k: String): StoreIO[C, Option[String]]
 

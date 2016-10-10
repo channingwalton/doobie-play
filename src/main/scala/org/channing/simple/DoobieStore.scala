@@ -1,13 +1,13 @@
 package org.channing.simple
 
+import cats.Monad
+import cats.data.{WriterT, Xor}
 import doobie.imports._
 import doobie.util.transactor.Transactor
+import cats.syntax.applicative._
+import doobie.util.iolite.IOLite
 
-import scalaz.concurrent.Task
-import scalaz.syntax.monad._
-import scalaz.{Monad, WriterT, \/}
-
-class DoobieStore(transactor: Transactor[Task]) extends Store[ConnectionIO] {
+class DoobieStore(transactor: Transactor[IOLite]) extends Store[ConnectionIO] {
 
   val M: Monad[ConnectionIO] = implicitly[Monad[ConnectionIO]]
 
@@ -18,7 +18,7 @@ class DoobieStore(transactor: Transactor[Task]) extends Store[ConnectionIO] {
     WriterT[ConnectionIO, List[PostCommit], Int](putDoobie(k, v).map(v ⇒ (Nil, v)))
 
   def postCommit(pc: PostCommit): StoreIO[ConnectionIO, Unit] =
-    WriterT[ConnectionIO, List[PostCommit], Unit]((List(pc), ()).point[ConnectionIO])
+    WriterT[ConnectionIO, List[PostCommit], Unit]((List(pc), ()).pure[ConnectionIO])
 
   private def getDoobie(k: String): ConnectionIO[Option[String]] =
     sql"select x from y".query[String].option
@@ -26,11 +26,13 @@ class DoobieStore(transactor: Transactor[Task]) extends Store[ConnectionIO] {
   private def putDoobie(k: String, v: String): ConnectionIO[Int] =
     sql"insert into person (name, age) values ($k, $v)".update.run
 
-  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable \/ T = {
-    storeIO.run.transact(transactor).attemptRun.map {
-      case (postCommits, result) ⇒
-        postCommits.foreach(_.f())
-        result
+  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable Xor T = {
+    storeIO.run.transact(transactor).attempt.map { either ⇒
+      Xor.fromEither(either).map {
+        case (postCommits, result) ⇒
+          postCommits.foreach(_.f())
+          result
+      }
     }
-  }
+  }.unsafePerformIO
 }
