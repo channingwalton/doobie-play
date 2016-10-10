@@ -1,6 +1,5 @@
 package org.channing.simple
 
-import cats.Monad
 import cats.data.{WriterT, Xor}
 import doobie.imports._
 import doobie.util.transactor.Transactor
@@ -8,8 +7,6 @@ import cats.syntax.applicative._
 import doobie.util.iolite.IOLite
 
 class DoobieStore(transactor: Transactor[IOLite]) extends Store[ConnectionIO] {
-
-  val M: Monad[ConnectionIO] = implicitly[Monad[ConnectionIO]]
 
   def get(k: String): StoreIO[ConnectionIO, Option[String]] =
     WriterT[ConnectionIO, List[PostCommit], Option[String]](getDoobie(k).map(v ⇒ (Nil, v)))
