@@ -17,11 +17,14 @@ class DoobieStore(transactor: Transactor[IOLite]) {
       def apply[A](fa: KVStoreA[A]): DoobieStored[A] =
         fa match {
           case Put(key, value) =>
-            WriterT[ConnectionIO, List[PostCommit], Unit](putDoobie(key, value).map(v ⇒ (Nil, ())))
+            writerT(putDoobie(key, value))
           case Get(key) =>
-            WriterT[ConnectionIO, List[PostCommit], Option[String]](getDoobie(key).map(v ⇒ (Nil, v)))
+            writerT(getDoobie(key))
         }
     }
+
+  private def writerT[T](c: ConnectionIO[T]): DoobieStored[T] =
+    WriterT[ConnectionIO, List[PostCommit], T](c.map(v ⇒ (Nil, v)))
 
   private def getDoobie(k: String): ConnectionIO[Option[String]] =
     sql"select x from y".query[String].option
