@@ -5,13 +5,13 @@ import cats.free.Free.liftF
 
 object Store {
 
+  type KVStore[A] = Free[KVStoreA, A]
+
   sealed trait KVStoreA[A]
 
   case class Put(key: String, value: String) extends KVStoreA[Unit]
 
   case class Get(key: String) extends KVStoreA[Option[String]]
-
-  type KVStore[A] = Free[KVStoreA, A]
 
   // Put returns nothing (i.e. Unit).
   def put(key: String, value: String): KVStore[Unit] =

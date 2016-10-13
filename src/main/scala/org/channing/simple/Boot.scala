@@ -1,5 +1,6 @@
 package org.channing.simple
 
+import cats.data.Xor
 import doobie.util.iolite.IOLite
 import doobie.util.transactor.{DriverManagerTransactor, Transactor}
 
@@ -14,5 +15,7 @@ object Boot {
     val store = new DoobieStore(transactor)
     val something = new SomethingUsingTheStore(store)
     val service = new Service(something)
+
+    val result: Xor[Throwable, String] = store.runStoreIO(service.greatComplexService)
   }
 }
