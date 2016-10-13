@@ -11,6 +11,8 @@ class DoobieStore(transactor: Transactor[IOLite]) {
 
   type DoobieStored[T] = WriterT[ConnectionIO, List[PostCommit], T]
 
+  implicit val DoobieStoredMonad: Monad[DoobieStored] = implicitly[Monad[DoobieStored]]
+
   def dbInterpreter: KVStoreA ~> DoobieStored =
     new (KVStoreA ~> DoobieStored) {
       def apply[A](fa: KVStoreA[A]): DoobieStored[A] =

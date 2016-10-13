@@ -2,6 +2,8 @@ package org.channing.free
 
 import cats.data.Xor
 import cats.~>
+import cats.data.WriterT._
+
 import doobie.imports.{IOLite, Transactor}
 import doobie.util.transactor.DriverManagerTransactor
 import org.channing.free.Store.KVStoreA
@@ -12,6 +14,7 @@ object Boot {
     val transactor: Transactor[IOLite] = DriverManagerTransactor[IOLite]("org.postgresql.Driver", "jdbc:postgresql:world", "postgres", "")
 
     val store = new DoobieStore(transactor)
+    import store.DoobieStoredMonad
 
     val something = new SomethingUsingTheStore
 
@@ -19,8 +22,8 @@ object Boot {
 
     val interpreter: KVStoreA ~> store.DoobieStored = store.dbInterpreter
 
-    val workToDo = Store.get("").foldMap(interpreter)
+    val workToDo: store.DoobieStored[String] = service.greatComplexService.foldMap(interpreter)
 
-    val res: Xor[Throwable, Option[String]] = store.runStoreIO(workToDo)
+    val res: Xor[Throwable, String] = store.runStoreIO(workToDo)
   }
 }
