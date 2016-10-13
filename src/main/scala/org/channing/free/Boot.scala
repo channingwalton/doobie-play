@@ -1,12 +1,10 @@
 package org.channing.free
 
 import cats.data.Xor
-import cats.~>
-import cats.data.WriterT._
-
 import doobie.imports.{IOLite, Transactor}
 import doobie.util.transactor.DriverManagerTransactor
-import org.channing.free.Store.KVStoreA
+import org.channing.free.Layer1.L1Op
+import org.channing.free.Store.KVStore
 
 object Boot {
 
@@ -16,13 +14,11 @@ object Boot {
     val store = new DoobieStore(transactor)
     import store.DoobieStoredMonad
 
-    val something = new SomethingUsingTheStore
+    val op: L1Op[String] = Layer1.op1("hello")
 
-    val service = new Service(something)
+    val opAsStore: KVStore[String] = op.foldMap(Layer1.storeInterpreter)
 
-    val interpreter: KVStoreA ~> store.DoobieStored = store.dbInterpreter
-
-    val workToDo: store.DoobieStored[String] = service.greatComplexService.foldMap(interpreter)
+    val workToDo: store.DoobieStored[String] = opAsStore.foldMap(store.dbInterpreter)
 
     val res: Xor[Throwable, String] = store.runStoreIO(workToDo)
   }
