@@ -13,7 +13,7 @@ object Boot {
   def main(args: Array[String]): Unit = {
     val transactor: Transactor[IOLite] = DriverManagerTransactor[IOLite]("org.postgresql.Driver", "jdbc:postgresql:world", "postgres", "")
     val store = new DoobieStore(transactor)
-    val something = new SomethingUsingTheStore(store)
+    val something = new Layer1(store)
     val service = new Service(something)
 
     val result: Xor[Throwable, String] = store.runStoreIO(service.greatComplexService)

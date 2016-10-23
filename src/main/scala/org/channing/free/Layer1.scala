@@ -3,7 +3,6 @@ package org.channing.free
 import cats.free.Free
 import cats.free.Free._
 import cats.~>
-import org.channing.free.Store.KVStore
 
 object Layer1 {
   type L1Op[A] = Free[L1OpA, A]

@@ -1,9 +1,10 @@
 package org.channing.simple
 
+import cats.implicits._
 import cats.data.{WriterT, Xor}
+
 import doobie.imports._
 import doobie.util.transactor.Transactor
-import cats.syntax.applicative._
 import doobie.util.iolite.IOLite
 
 class DoobieStore(transactor: Transactor[IOLite]) extends Store[ConnectionIO] {

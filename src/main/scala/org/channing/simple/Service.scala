@@ -13,7 +13,7 @@ import org.channing.simple.StoreIO._
   * StoreIO._ is also imported since it has other implicits required for
   * working with StoreIO without having to remember what they are.
   */
-class Service[C[_]: Monad](somethingUsingTheStore: SomethingUsingTheStore[C]) {
+class Service[C[_]: Monad](somethingUsingTheStore: Layer1[C]) {
 
   def greatComplexService: StoreIO[C, String] =
     for {
