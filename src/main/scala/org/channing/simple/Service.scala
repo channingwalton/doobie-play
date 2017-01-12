@@ -17,7 +17,7 @@ class Service[C[_]: Monad](somethingUsingTheStore: Layer1[C]) {
 
   def greatComplexService: StoreIO[C, String] =
     for {
-      a ← somethingUsingTheStore.doIt
-      b ← somethingUsingTheStore.doIt
+      a ← somethingUsingTheStore.putThings
+      b ← somethingUsingTheStore.getTheThings
     } yield a + b
 }

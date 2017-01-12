@@ -11,4 +11,8 @@ abstract class Store[C[_]] {
   def put(k: String, v: String): StoreIO[C, Int]
 
   def postCommit(pc: PostCommit): StoreIO[C, Unit]
+
+  def createSchema(): StoreIO[C, Int]
+
+  def delay(f: () ⇒ Unit): StoreIO[C, Unit]
 }

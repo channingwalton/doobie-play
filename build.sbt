@@ -31,3 +31,5 @@ libraryDependencies += "org.tpolecat" %% "doobie-core-cats" % "0.3.1-M1"
 libraryDependencies += "org.typelevel" %% "cats" % "0.7.2"
 
 libraryDependencies += "com.chuusai" %% "shapeless" % "2.3.2"
+
+libraryDependencies += "com.h2database" % "h2" % "1.3.176"
