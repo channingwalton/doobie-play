@@ -1,7 +1,7 @@
 package org.channing.free
 
 import cats._
-import cats.data.{WriterT, Xor}
+import cats.data.WriterT
 import doobie.imports._
 import doobie.util.iolite.IOLite
 import doobie.util.transactor.Transactor
@@ -33,9 +33,9 @@ class DoobieStore(transactor: Transactor[IOLite]) {
   private def putDoobie(k: String, v: String): ConnectionIO[Unit] =
     sql"insert into person (name, age) values ($k, $v)".update.run.map(_ ⇒ ())
 
-  def runStoreIO[T](storeIO: DoobieStored[T]): Throwable Xor T = {
+  def runStoreIO[T](storeIO: DoobieStored[T]): Throwable Either T = {
     storeIO.run.transact(transactor).attempt.map { either ⇒
-      Xor.fromEither(either).map {
+      either.map {
         case (postCommits, result) ⇒
           postCommits.foreach(_.f())
           result

@@ -1,6 +1,5 @@
 package org.channing.simple
 
-import cats.data.Xor
 import doobie.util.iolite.IOLite
 import doobie.util.transactor.{DriverManagerTransactor, Transactor}
 
@@ -11,7 +10,8 @@ import doobie.util.transactor.{DriverManagerTransactor, Transactor}
 object Boot {
 
   def main(args: Array[String]): Unit = {
-    val transactor: Transactor[IOLite] = DriverManagerTransactor[IOLite]("org.h2.Driver", "jdbc:h2:foo;TRACE_LEVEL_SYSTEM_OUT=2", "sa", "")
+
+    val transactor: Transactor[IOLite] = DriverManagerTransactor[IOLite]("org.h2.Driver", "jdbc:h2:/tmp/foo;TRACE_LEVEL_SYSTEM_OUT=2", "sa", "")
 
     val store = new DoobieStore(transactor)
 
@@ -23,7 +23,7 @@ object Boot {
 
     val serviceOp = service.greatComplexService
 
-    val result: Xor[Throwable, String] = store.runStoreIO(serviceOp)
+    val result: Either[Throwable, String] = store.runStoreIO(serviceOp)
 
     println(s"Result: $result")
   }

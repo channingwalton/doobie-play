@@ -1,7 +1,7 @@
 package org.channing.simple
 
 import cats.implicits._
-import cats.data.{WriterT, Xor}
+import cats.data.WriterT
 
 import doobie.imports._
 import doobie.util.transactor.Transactor
@@ -19,22 +19,22 @@ class DoobieStore(transactor: Transactor[IOLite]) extends Store[ConnectionIO] {
     WriterT[ConnectionIO, List[PostCommit], Unit]((List(pc), ()).pure[ConnectionIO])
 
   private def getDoobie(k: String): ConnectionIO[Option[String]] =
-    sql"select v from kv where k=$k".query[String].option
+    sql"select v from KV where k=$k".query[String].option
 
   private def putDoobie(k: String, v: String): ConnectionIO[Int] =
-    sql"insert into kv (k, v) values ($k, $v)".update.run
+    sql"insert into KV (k, v) values ($k, $v)".update.run
 
   def createSchema(): StoreIO[ConnectionIO, Int] =
     WriterT[ConnectionIO, List[PostCommit], Int](create.map(v ⇒ (Nil, v)))
 
-  private def create: ConnectionIO[Int] = sql"create table kv (k VARCHAR2(10), v VARCHAR2(10));".update.run
+  private def create: ConnectionIO[Int] = sql"create table KV (k VARCHAR2(10), v VARCHAR2(10));".update.run
 
   def delay(f: () ⇒ Unit): StoreIO[ConnectionIO, Unit] =
     WriterT[ConnectionIO, List[PostCommit], Unit](HC.delay(f()).map(v ⇒ (Nil, v)))
 
-  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable Xor T = {
+  def runStoreIO[T](storeIO: StoreIO[ConnectionIO, T]): Throwable Either T = {
     storeIO.run.transact(transactor).attempt.map { either ⇒
-      Xor.fromEither(either).map {
+      either.map {
         case (postCommits, result) ⇒
           println("Running post commits")
           postCommits.foreach(_.f())

@@ -1,6 +1,5 @@
 package org.channing.free
 
-import cats.data.Xor
 import doobie.imports.{IOLite, Transactor}
 import doobie.util.transactor.DriverManagerTransactor
 import org.channing.free.Store.KVStore
@@ -26,6 +25,6 @@ object Boot {
     val workToDo: store.DoobieStored[String] = opAsStore.foldMap(store.dbInterpreter)
 
     // run it to get a result
-    val res: Xor[Throwable, String] = store.runStoreIO(workToDo)
+    val res: Either[Throwable, String] = store.runStoreIO(workToDo)
   }
 }
