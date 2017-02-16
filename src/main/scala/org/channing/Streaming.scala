@@ -26,7 +26,7 @@ object Streaming extends App {
   /**
     * Get a stream of getAllKV and sink it into putStats
     */
-  val mkStats: ConnectionIO[Unit] = getAllKV.process.sink(v ⇒ putStats(v._1, v._2))
+  val mkStats: ConnectionIO[Unit] = getAllKV.process.buffer(3).sink(v ⇒ putStats(v._1, v._2))
 
   val getAllStats: ConnectionIO[Vector[(String, String)]] = sql"select k, v from stats".query[(String, String)].vector
 
