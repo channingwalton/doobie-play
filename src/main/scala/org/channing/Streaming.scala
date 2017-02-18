@@ -6,12 +6,21 @@ import doobie.util.transactor.{DriverManagerTransactor, Transactor}
 import cats.syntax.traverse._
 import cats.instances.all._
 import doobie.free.connection.ConnectionIO
+import org.h2.tools.Server
+
+/*
+ To get the fetch size to work the H2 DB needs to run in server mode.
+ You also need to set -Dh2.serverResultSetFetchSize=5
+ */
+object StartServer extends App {
+  val server = Server.createTcpServer().start()
+}
 
 object Streaming extends App {
 
   val dbFileName = "/tmp/streaming" + System.currentTimeMillis()
 
-  val transactor: Transactor[IOLite] = DriverManagerTransactor[IOLite]("org.h2.Driver", s"jdbc:h2:$dbFileName;TRACE_LEVEL_SYSTEM_OUT=2", "sa", "")
+  val transactor: Transactor[IOLite] = DriverManagerTransactor[IOLite]("org.h2.Driver", s"jdbc:h2:tcp://localhost//$dbFileName;TRACE_LEVEL_SYSTEM_OUT=3", "sa", "")
 
   val createSchema: ConnectionIO[Int] = sql"create table KV (k VARCHAR2(10), v VARCHAR2(10)); create table stats (k VARCHAR2(10), v VARCHAR2(10));".update.run
 
@@ -26,14 +35,14 @@ object Streaming extends App {
   /**
     * Get a stream of getAllKV and sink it into putStats
     */
-  val mkStats: ConnectionIO[Unit] = getAllKV.process.buffer(3).sink(v ⇒ putStats(v._1, v._2))
+  val mkStats: ConnectionIO[Unit] = getAllKV.process.sink(v ⇒ putStats(v._1, v._2))
 
   val getAllStats: ConnectionIO[Vector[(String, String)]] = sql"select k, v from stats".query[(String, String)].vector
 
   // run all the things
   createSchema.transact(transactor).unsafePerformIO
 
-  val fill = (0 until 10).toList.map(v ⇒ putKV(v.toString, v.toString)).sequence
+  val fill = (0 until 600).toList.map(v ⇒ putKV(v.toString, v.toString)).sequence
   fill.transact(transactor).unsafePerformIO
 
   println("**********************************")
